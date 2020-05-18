@@ -39,6 +39,16 @@ module.exports = {
     }
   },
   module: {
+    loaders: [
+        {
+            test: /\.js$/,
+            exclude: /(node_modules|bower_components)/,
+            loader: 'babel',
+            query: {
+                presets: ['es2015']
+            }
+        }
+    ],
     rules: [
       ...(config.dev.useEslint ? [createLintingRule()] : []),
       {
@@ -49,6 +59,10 @@ module.exports = {
       {
         test: /\.scss$/,
         loader: ['style', 'css', 'sass']
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2?)$/,
+        loader: 'url-loader'
       },
       {
         test: /\.js$/,
