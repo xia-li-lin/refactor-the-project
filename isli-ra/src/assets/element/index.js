@@ -1,4 +1,4 @@
-import { Button, Row, Form, FormItem, Input, Col } from 'element-ui'
+import { Button, Row, Form, FormItem, Input, Col, Icon, Image } from 'element-ui'
 
 const element = {
   install: function (Vue) {
@@ -8,6 +8,8 @@ const element = {
     Vue.use(FormItem)
     Vue.use(Input)
     Vue.use(Col)
+    Vue.use(Icon)
+    Vue.use(Image)
   }
 }
 

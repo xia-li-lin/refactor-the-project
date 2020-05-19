@@ -61,10 +61,6 @@ module.exports = {
         loader: ['style', 'css', 'sass']
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2?)$/,
-        loader: 'url-loader'
-      },
-      {
         test: /\.js$/,
         loader: 'babel-loader',
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]

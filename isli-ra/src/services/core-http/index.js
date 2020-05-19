@@ -1,6 +1,6 @@
-import state from './cache/state'
-import header from './http/http-header'
 import { Http } from './http/http'
+import header from './http/http-header'
+import state from './cache/state'
 
 export class ServiceManager {
   constructor () {
@@ -10,6 +10,7 @@ export class ServiceManager {
   registerService (name, service) {
     this.service[name] = service
   }
+
   registerToVue (Vue) {
     for (let name in this.service) {
       let proName = '$' + name.toLowerCase().replace('service', 'Serv')
@@ -43,7 +44,7 @@ export class ServiceManager {
   }
 }
 
-export class BaseService {
+export class BaseSevice {
   constructor (http) {
     this.http = http
   }
@@ -53,12 +54,13 @@ export const serviceManager = new ServiceManager()
 
 function plugin (Vue) {
   if (plugin.installed) {
-    return false
+    return
   }
   Vue.headerServ = header
   serviceManager.registerToVue(Vue)
 }
 
 export default plugin
-export * from './http/http-hooks'
-export {state}
+export * from './http-hooks'
+export * from './http/http-image-upload'
+export { state }

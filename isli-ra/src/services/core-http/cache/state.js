@@ -39,7 +39,7 @@ class State {
       try {
         value = JSON.parse(value)
       } catch (e) {
-        console.log(e)
+        console.error(e)
         return null
       }
     }
@@ -61,7 +61,7 @@ class State {
     } else {
       for (let name in this.data) {
         if (name.startsWith(valKey)) {
-          this.clear(valKey)
+          this.clear(name)
         }
       }
     }

@@ -1,22 +1,23 @@
 <template>
     <div class="login">
+        <h1>用户登录</h1>
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item label="用户名" prop="userName">
-                <el-input v-model="ruleForm.userName" autocomplete="off"></el-input>
+            <el-form-item label="用户名" prop="username">
+                <el-input v-model="ruleForm.username" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
                 <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item   prop="code"
+            <el-form-item   prop="mobileCode"
                             :rules="[
-                            {required:true,message:'请输入验证码'},
-                            {type:'number',message:'验证码必须为数字'}
+                            {required: true, message: '请输入验证码'},
+                            {type:'number', message: '验证码必须为数字'}
                             ]">
                 <el-col :span="12">
-                    <el-input type="code" v-model.number="ruleForm.code" autocomplete="off"></el-input>
+                    <el-input type="mobileCode" v-model.number="ruleForm.mobileCode" autocomplete="off"></el-input>
                 </el-col>
                 <el-col :span="12">
-                    <el-button type="primary" @click="sendCode">发送验证码</el-button>
+                    <el-button type="primary" :disabled="disabledSendCode" @click="sendCode">{{validCodeBtnText}}</el-button>
                 </el-col>
             </el-form-item>
             <el-form-item size="large">
@@ -27,44 +28,61 @@
 </template>
 
 <script>
+import { timer } from 'rxjs'
+import { take } from 'rxjs/operators'
+
 export default {
   data () {
-    const validateUserName = (rule, value, callback) => {
-      console.log(rule)
-      if (!value) {
-        return callback(new Error('请输入用户名'))
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('请输入密码'))
-      }
-    }
-    const validateCode = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('请输入验证码'))
-      }
-    }
     return {
+      validCodeBtnText: '发送验证码',
+      disabledSendCode: false,
+      resetSecond: 120,
       ruleForm: {
-        userName: '',
+        username: '',
         password: '',
-        code: ''
+        mobileCode: ''
       },
       rules: {
-        userName: [{validator: validateUserName, trigger: 'blur'}],
-        password: [{validator: validatePassword, trigger: 'blur'}],
-        code: [{validator: validateCode, trigger: 'blur'}]
+        username: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+        password: [{required: true, message: '请输入密码', trigger: 'blur'}],
+        mobileCode: [{required: true, message: '请输入验证码', trigger: 'blur'}]
       }
     }
   },
   methods: {
+    increment () {
+      this.$store.commit('increment')
+      console.log(this.$store.state.count)
+    },
     sendCode () {
-      console.log(this.ruleForm.code)
+      if (this.disabledSendCode) {
+        return false
+      }
+      this.$loginServ.sendValidCode(this.ruleForm.username).success((success) => {
+        this.disabledSendCode = true
+        this.resetSecond = 120
+        this.validCodeBtnText = '重新发送'
+        timer(0, 1000).pipe(take(120)).subscribe(value => {
+          this.resetSecond -= 1
+          this.validCodeBtnText = this.resetSecond + '秒后重试'
+        },
+        () => {},
+        () => {
+          this.validCodeBtnText = '发送验证码'
+          this.disabledSendCode = false
+        })
+      })
     },
     submitForm (formName) {
+      console.log(this.$refs[formName])
       this.$refs[formName].validate(valid => {
-        if (valid) {}
+        console.log(valid)
+        if (valid) {
+          console.log(this.ruleForm)
+          this.$loginServ.login(this.ruleForm).success((success) => {
+            console.log(success)
+          })
+        }
       })
     }
   }
@@ -73,6 +91,13 @@ export default {
 
 <style lang="scss" scoped>
 .login{
+    h1{
+      font-family: SourceHanSansSC-Regular;
+      font-size: 32px;
+      line-height: 32px;
+      color: #354754;
+      font-weight: normal;
+    }
     width: 400px;
     margin: auto;
 }

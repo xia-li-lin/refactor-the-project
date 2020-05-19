@@ -11,13 +11,13 @@ module.exports = {
 		assetsPublicPath: '/',
 		proxyTable: {
 			'*': {
-				target: 'http://172.16.3.248:11999',
-				secure: false,
-				logLevel: 'debug',
-				outFiles: 'D://a.txt',
-				pathRewrite: {
-					'^/dist-publisher/index.html': '/index.html'
-				}
+			  target: 'https://172.16.2.43:8443',
+			  secure: false,
+			  logLevel: 'debug',
+			  outFiles: 'D://a.txt',
+			  pathRewrite: {
+				'^/dist-publisher/index.html': '/index.html'
+			  }
 			}
 		},
 
